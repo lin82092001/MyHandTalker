@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity									 		//	MainActivity�
 	public Switch lang;
 	public static String langSetting = "";
 	Vocabulary Vocabulary1;
+	VoiceRecognition VoiceRecognition1=new VoiceRecognition(this);
 
 	@Override
 	protected void onStart() 																//	onStart方法
@@ -303,7 +304,7 @@ public class MainActivity extends AppCompatActivity									 		//	MainActivity�
 				public void onClick(View v)													//  onClick程式，speakButton被按下時觸發
 				{																			//  進入onClick程式
 					// TODO Auto-generated method stub
-					startVoiceRecognitionActivity();										//  呼叫startVoiceRecognitionActivity副程式，開始語音辨識
+					VoiceRecognition1.startVoiceRecognitionActivity();										//  呼叫startVoiceRecognitionActivity副程式，開始語音辨識
 				}																			//  結束onClick程式
 			});
 		}																					//  結束if敘述
@@ -1027,14 +1028,5 @@ public class MainActivity extends AppCompatActivity									 		//	MainActivity�
 			}
 		}
 	}
-	
-	private void startVoiceRecognitionActivity()											//  startVoiceRecognitionActivity副程式
-	{																						//  進入startVoiceRecognitionActivity副程式
-		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);				//  通過Intent傳遞語音辨識的模式
-		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-		//  設定語言模式和自由形式的語音辨識
-		intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speech recognition demo");			//  提示語音開始
-		startActivityForResult(intent, VoiceRecognition.GetVOICE_RECOGNITION_REQUEST_CODE());
-		//  開始執行我們的Intent、語音辨識
-	}																						//  結束startVoiceRecognitionActivity副程式
+
 }																							//  結束MainActivity類別
