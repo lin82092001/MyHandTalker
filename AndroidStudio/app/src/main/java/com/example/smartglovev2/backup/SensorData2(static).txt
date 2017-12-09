@@ -1,0 +1,120 @@
+package com.example.jimmy.smartglovev2;
+
+/**
+ * Created by jimmy on 2017/7/17.
+ */
+
+import java.util.ArrayList;																	//	引入android.util.ArrayList函式庫
+
+public class SensorData 																	//	SensorData類別
+{																							//	進入SensorData類別
+	private static int FA = 0;																//	宣告FA靜態私有變數
+	private static int FB = 0;																//	宣告FB靜態私有變數
+	private static int FC = 0;																//	宣告FC靜態私有變數
+	private static int FD = 0;																//	宣告FD靜態私有變數
+	private static int FE = 0;																//	宣告FE靜態私有變數
+	private static int BT = 0;																//	宣告BT靜態私有變數
+	private static int AX = 0;																//	宣告AX靜態私有變數
+	private static int AY = 0;																//	宣告AY靜態私有變數
+	private static int AZ = 0;																//	宣告AZ靜態私有變數
+	private static int GX = 0;																//	宣告GX靜態私有變數
+	private static int GY = 0;																//	宣告GY靜態私有變數
+	private static int GZ = 0;																//	宣告GZ靜態私有變數
+	
+	public static int GetFA()																//	GetFA方法
+	{																						//	進入GetFA方法
+		return FA;																			//	回傳FA
+	}																						//	結束GetFA方法
+	public static void SetFA(int InputData)													//	SetFA方法
+	{																						//	進入SetFA方法
+		FA = InputData;																		//	設定FA數值
+	}																						//	結束SetFA方法
+	public static int GetFB()																//	GetFB方法
+	{																						//	進入GetFB方法
+		return FB;																			//	回傳FB
+	}																						//	結束GetFB方法
+	public static void SetFB(int InputData)													//	SetFB方法
+	{																						//	進入SetFB方法
+		FB = InputData;																		//	設定FB數值
+	}																						//	結束SetFB方法
+	public static int GetFC()																//	GetFC方法
+	{																						//	進入GetFC方法
+		return FC;																			//	回傳FC
+	}																						//	結束GetFC方法
+	public static void SetFC(int InputData)													//	SetFC方法
+	{																						//	進入SetFC方法
+		FC = InputData;																		//	設定FC數值
+	}																						//	結束SetFC方法
+	public static int GetFD()																//	GetFD方法
+	{																						//	進入GetFD方法
+		return FD;																			//	回傳FD
+	}																						//	結束GetFD方法
+	public static void SetFD(int InputData)													//	SetFD方法
+	{																						//	進入SetFD方法
+		FD = InputData;																		//	設定FD數值
+	}																						//	結束SetFD方法
+	public static int GetFE()																//	GetFE方法
+	{																						//	進入GetFE方法
+		return FE;																			//	回傳FE
+	}																						//	結束GetFE方法
+	public static void SetFE(int InputData)													//	SetFE方法
+	{																						//	進入SetFE方法
+		FE = InputData;																		//	設定FE數值
+	}																						//	結束SetFE方法
+	public static int GetBT()																//	GetFA方法
+	{																						//	進入GetBT方法
+		return BT;																			//	回傳BT
+	}																						//	結束GetBT方法
+	public static void SetBT(int InputData)													//	SetBT方法
+	{																						//	進入SetBT方法
+		BT = InputData;																		//	設定BT數值
+	}																						//	結束SetBT方法
+	public static int GetAX()																//	GetAX方法
+	{																						//	進入GetAX方法
+		return AX;																			//	回傳AX
+	}																						//	結束GetAX方法
+	public static void SetAX(int InputData)													//	SetAX方法
+	{																						//	進入SetAX方法
+		AX = InputData;																		//	設定AX數值
+	}																						//	結束SetAX方法
+	public static int GetAY()																//	GetAY方法
+	{																						//	進入GetAY方法
+		return AY;																			//	回傳FA
+	}																						//	結束GetAY方法
+	public static void SetAY(int InputData)													//	SetAY方法
+	{																						//	進入SetAY方法
+		AY = InputData;																		//	設定AY數值
+	}																						//	結束SetAY方法
+	public static int GetAZ()																//	GetAZ方法
+	{																						//	進入GetAZ方法
+		return AZ;																			//	回傳AZ
+	}																						//	結束GetAZ方法
+	public static void SetAZ(int InputData)													//	SetAZ方法
+	{																						//	進入SetAZ方法
+		AZ = InputData;																		//	設定AZ數值
+	}																						//	結束SetAZ方法
+	public static int GetGX()																//	GetGX方法
+	{																						//	進入GetGX方法
+		return GX;																			//	回傳GX
+	}																						//	結束GetGX方法
+	public static void SetGX(int InputData)													//	SetGX方法
+	{																						//	進入SetGX方法
+		GX = InputData;																		//	設定GX數值
+	}																						//	結束SetGX方法
+	public static int GetGY()																//	GetGY方法
+	{																						//	進入GetGY方法
+		return GY;																			//	回傳GY
+	}																						//	結束GetGY方法
+	public static void SetGY(int InputData)													//	SetGY方法
+	{																						//	進入SetGY方法
+		GY = InputData;																		//	設定GY數值
+	}																						//	結束SetGY方法
+	public static int GetGZ()																//	GetGZ方法
+	{																						//	進入GetGZ方法
+		return GZ;																			//	回傳GZ
+	}																						//	結束GetGZ方法
+	public static void SetGZ(int InputData)													//	SetGZ方法
+	{																						//	進入SetGZ方法
+		GZ = InputData;																		//	設定GZ數值
+	}																						//	結束SetGZ方法
+}																							//	結束SensorData類別

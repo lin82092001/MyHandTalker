@@ -1,0 +1,150 @@
+package com.example.jimmy.smartglovev2;
+
+/**
+ * Created by jimmy on 2017/7/14.
+ */
+
+import android.app.AlertDialog;																//	引入android.app.AlertDialog函式庫
+import android.bluetooth.BluetoothAdapter;													//	引入android.bluetooth.BluetoothAdapter函式庫
+import android.bluetooth.BluetoothDevice;													//	引入android.bluetooth.BluetoothDevice函式庫
+import android.bluetooth.BluetoothSocket;													//	引入android.bluetooth.BluetoothSocket函式庫
+import android.content.BroadcastReceiver;													//	引入android.content.BroadcastReceiver(廣播接收元件)函式庫
+import android.content.Context;																//	引入android.content.Context函式庫
+import android.content.DialogInterface;														//	引入android.content.DialogInterface函式庫
+import android.content.Intent;																//	引入android.content.Intent函式庫
+import android.content.IntentFilter;														//	引入android.content.IntentFilter函式庫
+import android.widget.ArrayAdapter;															//	引入android.widget.ArrayAdapter函式庫
+import android.widget.Toast;																//	引入android.widget.Toast函式庫
+import android.util.Log;																	//	引入android.util.Log函式庫
+
+import java.util.Set;																		//	引入java.util.Set函式庫
+
+public class BluetoothControl extends MainActivity											//	BluetoothControl類別
+{																							//	進入BluetoothControl類別
+	public enum BT_STATE																	//	藍芽裝置狀態列舉(Program State enum)
+	{																						//	進入BT_STATE列舉
+		SELECT_BT_DEVICE, CONNECTING, CONNECTED												//	列出藍芽狀態
+	};																						//	結束BT_STATE列舉
+	// Program now state
+	public static BT_STATE state = BT_STATE.SELECT_BT_DEVICE;								//	宣告state變數為BT_STATE列舉型態
+	
+	private final static String TAG = "BluetoothControl";									//	宣告TAG字串，用於Log紀錄
+	private static final int REQUEST_ENABLE_BT = 1;											//	宣告REQUEST_ENABLE_BT控制變數，
+	//*****bluetooth adapter*****
+	public static BluetoothAdapter BTadapter;												//	宣告BTadapter物件為藍芽BluetoothAdapter
+	public static ArrayAdapter<String> mDeviceArrayAdapter;									//	宣告mDeviceArrayAdapter為ArrayAdapter<String>
+	
+	// selected Left hand bluetooth device address
+	public static  String LHAddress = "";													//	宣告LHAddress字串變數記錄左手藍芽裝置位置
+	// selected right hand bluetooth device address
+	public static  String RHAddress = "";													//	宣告RHAddress字串變數記錄右手藍芽裝置位置
+	
+	public BluetoothControl()																//	BluetoothControl建構子
+	{																						//	進入BluetoothControl建構子
+		
+	}																						//	結束BluetoothControl建構子
+	
+	//***私有變數存取方法***
+	private int GET_REQUEST_ENABLE_BT()														//	GET_REQUEST_ENABLE_BT方法
+	{																						//	進入GET_REQUEST_ENABLE_BT方法
+		return REQUEST_ENABLE_BT;															//	回傳REQUEST_ENABLE_BT數值
+	}																						//	結束GET_REQUEST_ENABLE_BT方法
+	
+	public String checkBluetooth()															//	checkBluetooth(確認本機藍芽功能)方法
+	{																						//	進入checkBluetooth方法
+		if (this.BTadapter == null) 														//	若BTadapter為null(裝置不支援藍芽功能)
+		{																					//	進入if敘述
+			return noBluetoothDevice();														//	呼叫noBluetoothDevice方法
+		}																					//	結束if敘述
+		Set<BluetoothDevice> btBondedSet = BTadapter.getBondedDevices();					//	宣告btBondedSet為配對過的藍芽列表
+		if (btBondedSet.size() > 0) {														//	若配對過的藍芽裝置數量大於0
+			for (BluetoothDevice device : btBondedSet) 										//	依序取出配對過的藍芽裝置
+			{																				//	進入for迴圈
+				mDeviceArrayAdapter.add(device.getName() + "\n" + device.getAddress());		//	將已配對藍芽之裝置名稱及實體位址加入mDeviceArrayAdapter集合
+			}																				//	結束for迴圈
+		}																					//	結束if敘述
+		if (requireBluetooth()) 															//	若requireBluetooth成功
+		{																					//	進入if敘述
+			String BluetoothInformation = getBluetoothInformation();						//	呼叫getBluetoothInformation取得藍芽資訊
+			BluetoothBroadcastReceiverSetting();											//	呼叫BluetoothBroadcastReceiverSetting方法
+			return BluetoothInformation;													//	回傳藍芽資訊字串
+		}																					//	結束if敘述
+		else																				//	若requireBluetooth失敗
+		{																					//	進入else敘述
+			return "requireBluetooth failed!!";												//	回傳"requireBluetooth failed!!"字串
+		}																					//	結束else敘述
+	}																						//	結束checkBluetooth方法
+	
+	private String noBluetoothDevice()														//	noBluetoothDevice方法
+	{																						//	進入noBluetoothDevice方法
+		Toast.makeText(this, "本裝置不支援藍芽連線功能", Toast.LENGTH_LONG).show();			//	顯示訊息"本裝置不支援藍芽連線功能"
+		this.finish();
+		return "No Bluetooth Device";														//	回傳"No Bluetooth Device"
+	}																						//	結束noBluetoothDevice方法
+	
+	/**	requireBluetooth方法
+		requireBluetooth方法用於建立藍芽要求
+		
+	 */
+	private boolean requireBluetooth() 														//	requireBluetooth方法
+	{																						//	進入requireBluetooth方法
+		if (!BTadapter.isEnabled()) 														//	若BTadapter未致能
+		{																					//	進入if敘述
+			Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+			startActivityForResult(enableIntent, REQUEST_ENABLE_BT);						//	啟動新的Activity
+			return false;																	//	回傳false
+		}																					//	結束if敘述
+		return true;																		//	回傳true(BTadapter已致能)
+	}																						//	結束requireBluetooth方法
+	
+	
+	/**	getBluetoothInformation方法
+		getBluetoothInformation方法用於取得本機藍芽資訊(實體位址與名稱)
+		回傳字串為本機藍芽資訊(實體位址與名稱)
+	 */
+	private String getBluetoothInformation() 												//	getBluetoothInformation方法
+	{																						//	進入getBluetoothInformation方法
+		String address = BTadapter.getAddress();											//	取得藍芽實體位址
+		String name = BTadapter.getName();													//	取得藍芽名稱
+		String information = "藍芽資訊： " + name + " - " + address;						//	建構藍芽資訊字串
+		return information;																	//	回傳藍芽資訊字串
+	}																						//	結束getBluetoothInformation方法
+	
+	private void BluetoothBroadcastReceiverSetting()										//	BluetoothBroadcastReceiverSetting方法
+	{																						//	進入BluetoothBroadcastReceiverSetting方法
+		IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);				//	設定廣播過濾器
+		this.registerReceiver(mReceiver, filter);											//	註冊廣播過濾器
+
+		filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);				//	設定廣播過濾器
+		this.registerReceiver(mReceiver, filter);											//	註冊廣播過濾器
+
+		Log.i(TAG, " Receiver");															//	紀錄Log檔案
+		BTadapter.startDiscovery();
+		this.setProgressBarIndeterminateVisibility(true);
+	}																						//	結束BluetoothBroadcastReceiverSetting方法
+	
+	private final BroadcastReceiver mReceiver = new BroadcastReceiver() 					//	廣播接收器BroadcastReceiver，接收系統藍芽廣播
+	{																						//	進入mReceiver
+		@Override
+		public void onReceive(Context context, Intent intent) 								//	廣播接收(onReceive)方法
+		{																					//	進入廣播接收(onReceive)方法
+			String action = intent.getAction();
+
+			if (BluetoothDevice.ACTION_FOUND.equals(action)) 
+			{																				//	進入if敘述
+				BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+				if (device.getBondState() != BluetoothDevice.BOND_BONDED) 
+				{
+					String message = "New Bluetooth Device Discovery : " + device.getName() + "\n" + device.getAddress();
+					mDeviceArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+					Log.i(TAG, message);
+				}
+			} else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+				Log.i(TAG, "DISCOVERY Finished");
+				setProgressBarIndeterminateVisibility(false);
+			}
+		}																					//	結束廣播接收(onReceive)方法
+	};																						//	結束mReceiver
+	
+	
+}																							//	結束BluetoothControl類別

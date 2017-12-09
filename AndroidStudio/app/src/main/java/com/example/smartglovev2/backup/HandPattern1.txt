@@ -1,0 +1,33 @@
+package com.example.jimmy.smartglovev2;
+
+/**
+ * Created by jimmy on 2017/7/14.
+ */
+
+import java.util.regex.Pattern;																//	引入java.util.regex.Pattern函式庫
+
+public class HandPattern 																	//	HandPattern類別
+{																							//	進入HandPattern類別
+	private Pattern leftHandPattern;														//	宣告leftHandPattern(左手手部Pattern)物件
+	private Pattern rightHandPattern;														//	宣告rightHandPattern(右手手部Pattern)物件
+	public String word;																		//	宣告word(詞彙)
+	public int mp3ID;																		//	
+
+	public HandPattern(String word, String lefthand, String righthand, int mp3ID) 			//	HandPattern建構子
+	{																						//	進入HandPattern建構子
+		this.leftHandPattern = Pattern.compile(lefthand);									//	將lefthand字串轉換成leftHandPattern
+		this.rightHandPattern = Pattern.compile(righthand);									//	將righthand字串轉換成rightHandPattern
+		this.mp3ID = mp3ID;																	//	
+		this.word = word;																	//	
+	}																						//	結束HandPattern建構子
+
+	public boolean isMatch(String lefthand, String rightHand) 								//	isMatch方法
+	{																						//	進入isMatch方法
+		boolean leftHandPatternMatcher;														//	宣告leftHandPatternMatcher布林變數
+		leftHandPatternMatcher = this.leftHandPattern.matcher(lefthand).matches();			//	leftHandPatternMatcher為matches方法所傳回之布林變數
+		boolean rightHandPatternMatcher;													//	宣告rightHandPatternMatcher布林變數
+		rightHandPatternMatcher = this.rightHandPattern.matcher(rightHand).matches();		//	rightHandPatternMatcher為matches方法所傳回之布林變數
+		return leftHandPatternMatcher && rightHandPatternMatcher;							//	回傳兩者AND運算結果
+	}																						//	結束isMatch方法
+}																							//	結束HandPattern類別
+

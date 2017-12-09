@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">SmartGloveV2.1</string>
+    <string name="btnchange">切語言</string>
+    <string name="btnok">連線</string>
+    <string name="select">選擇藍芽裝置</string>
+    <string name="left">左手</string>
+    <string name="right">右手</string>
+    <string name="voice">語音輸入</string>
+    <string name="changeMsgEn">切為英文</string>
+    <string name="changeMsgCh">切為中文</string>
+    <string name="nowMsg">中文</string>
+    <string name="CH">中文</string>
+    <string name="EN">英文</string>
+</resources>

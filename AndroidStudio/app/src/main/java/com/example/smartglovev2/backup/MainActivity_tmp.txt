@@ -1,0 +1,664 @@
+package com.example.jimmy.smartglovev2;
+
+	
+	
+
+public class MainActivity extends AppCompatActivity											//	MainActivity類別
+{																							//	進入MainActivity類別
+	private final static String TAG = "MainActivity";										//	宣告TAG字串，用於Log紀錄
+	private static BluetoothControl BluetoothControl1;										//	宣告BluetoothControl1為藍芽控制(BluetoothControl)類別物件
+	//*****物件宣告******
+	static TextView TextView_R;																//	宣告TextView物件TextView_R
+	static TextView TextView_L;																//	宣告TextView物件TextView_L
+	private static TextView BluetoothInformation;											//	宣告BluetoothInformation物件為TextView，用於顯示藍芽資訊
+	private static TextView LHTV, RHTV;														//	宣告LHTV、RHTV物件為TextView，用TextView顯示藍芽連線選擇清單
+	// ui - bluetooth device list
+	private ListView LHBTList;																//	建立LHBTList為ListView物件
+	private ListView RHBTList;																//	建立RHBTList為ListView物件
+	private static Button BluetoothConnBtn;														//	宣告連線按鈕物件(ui Button)
+	
+	//***未重構部分start***
+	private boolean secure = true;															//	宣告secure為布林變數，初始值為true
+	// Unique UUID for this application
+	private static final UUID MY_UUID_SECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+	private static final UUID MY_UUID_INSECURE = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
+	private static final int UPDATE_SETTING_SUCCESS = 0x0001;
+	private static final int UPDATE_SETTING_SU = 0x0002;
+	private ArrayList<TextView> left, right;												//	宣告ArrayList<TextView>物件left與right
+	// left hand bluetooth socket , right hand bluetooth socket
+	private BluetoothSocket LHBS, RHBS;														//	宣告左右手藍芽BluetoothSocket物件
+	// communication Thread
+	private Comm a, b;
+	// 資料處理執行緒
+	private DataProcess dataProcess;
+	MyHandler handler = new MyHandler();
+	private String word_a;
+	//***未重構部分end***
+	
+	protected void onStart() 																//	onStart方法
+	{																						//	進入onStart方法
+		super.onStart();																	//	APP啟動
+	}																						//	結束onStart方法
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) 										//	onCreate方法
+	{																						//	進入onCreate方法
+		super.onCreate(savedInstanceState);
+		this.requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);					//	設定應用程式視窗顯示模式為FEATURE_INDETERMINATE_PROGRESS
+		setContentView(R.layout.activity_main);
+		
+		//*****連結物件*****()
+		TextView_R=(TextView) findViewById(R.id.TextView_R);								//  將Layout物件TextView_R與該程式宣告物件TextView_R連結
+		TextView_L=(TextView) findViewById(R.id.TextView_L);								//  將Layout物件TextView_L與該程式宣告物件TextView_L連結
+		LHTV = (TextView) this.findViewById(R.id.LHTextView);								//	將Layout物件LHTextView與該程式宣告物件LHTV連結
+		RHTV = (TextView) this.findViewById(R.id.RHTextView);								//	將Layout物件RHTextView與該程式宣告物件RHTV連結
+		
+		BluetoothConnBtn = (Button) findViewById(R.id.btnok);								//  將btnok與該程式物件BluetoothConnBtn連結
+		BluetoothConnBtn.setOnClickListener(new OnClickListener()							//  若BluetoothConnBtn按鈕被按下
+		{																					//  進入OnClickListener程式
+			@SuppressWarnings("deprecation")
+			@Override
+			public void onClick(View arg0) {												//	按鈕onClick方法
+				BluetoothConnectControl();
+			}																				//	結束onClick方法
+		});																					//  結束OnClickListener程式
+		
+		//***未重構部分start***
+		BluetoothInformation = (TextView) this.findViewById(R.id.BTinformationTextView);	//  將BTinformationTextView與該程式宣告物件BluetoothInformation連結
+		BluetoothControl1 = new BluetoothControl();											//	初始化BluetoothControl1物件
+		BluetoothInformation.setText(BluetoothControl1.checkBluetooth());					//	設定BluetoothInformation文字方塊物件顯示文字
+		
+		Button speakButton = (Button) findViewById(R.id.BT_GV);								//  將Layout物件speakButton與該程式宣告物件BT_GV連結
+		LHBTList = (ListView) this.findViewById(R.id.LHBTListView);							//  將LHBTListView與該程式物件LHBTList連結
+		RHBTList = (ListView) this.findViewById(R.id.RHBTListView);							//  將RHBTListView與該程式物件RHBTList連結
+		
+		PackageManager pm = getPackageManager();
+		List<ResolveInfo> activities = pm.queryIntentActivities(new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0);
+		if (activities.size() != 0)
+		{																					//  進入if敘述
+			speakButton.setOnClickListener(new OnClickListener()
+			{
+				@Override
+				public void onClick(View v)													//  onClick程式，speakButton被按下時觸發
+				{																			//  進入onClick程式
+					// TODO Auto-generated method stub
+					VoiceRecognition VoiceRecognition1 = new VoiceRecognition();
+					VoiceRecognition1.startVoiceRecognitionActivity();						//  呼叫startVoiceRecognitionActivity副程式，開始語音辨識
+				}																			//  結束onClick程式
+			});
+		}																					//  結束if敘述
+		else
+		{																					//  進入else敘述
+			speakButton.setEnabled(false);
+			speakButton.setText("Recognizer not present");
+		}																				//  結束else敘述
+		left = new ArrayList<TextView>();												//  建立left物件(ArrayList<TextView>型態)
+		right = new ArrayList<TextView>();												//  建立right物件(ArrayList<TextView>型態)
+		left.add(((TextView) findViewById(R.id.ltv1)));									//  新增項目至left ArrayList
+		left.add(((TextView) findViewById(R.id.ltv2)));									//  新增項目至left ArrayList
+		left.add(((TextView) findViewById(R.id.ltv3)));									//  新增項目至left ArrayList
+		left.add(((TextView) findViewById(R.id.ltv4)));									//  新增項目至left ArrayList
+		left.add(((TextView) findViewById(R.id.ltv5)));									//  新增項目至left ArrayList
+
+		right.add((TextView) findViewById(R.id.rtv1));									//  新增項目至right ArrayList
+		right.add((TextView) findViewById(R.id.rtv2));									//  新增項目至right ArrayList
+		right.add((TextView) findViewById(R.id.rtv3));									//  新增項目至right ArrayList
+		right.add((TextView) findViewById(R.id.rtv4));									//  新增項目至right ArrayList
+		right.add((TextView) findViewById(R.id.rtv5));									//  新增項目至right ArrayList
+
+		BluetoothControl.mDeviceArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+		BluetoothControl.BTadapter = BluetoothAdapter.getDefaultAdapter();
+		LHBTList.setOnItemClickListener(new OnItemClickListener() {						//	設定LHBTList顯示
+
+			@Override
+			public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
+				String info = ((TextView) v).getText().toString();
+				String address = info.substring(info.length() - 17);
+				Log.i(TAG, "click: " + address);
+				BluetoothDevice device = BluetoothControl.BTadapter.getRemoteDevice(address);
+				BluetoothControl.LHAddress = device.getAddress();
+				LHTV.setText("左手: " + device.getName());
+			}
+
+		});
+
+		RHBTList.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
+				String info = ((TextView) v).getText().toString();
+				String address = info.substring(info.length() - 17);
+				Log.i(TAG, "click: " + address);
+				BluetoothDevice device = BluetoothControl.BTadapter.getRemoteDevice(address);
+				BluetoothControl.RHAddress = device.getAddress();
+				RHTV.setText("右手: " + device.getName());
+			}
+
+		});
+
+		LHBTList.setAdapter(BluetoothControl.mDeviceArrayAdapter);
+		RHBTList.setAdapter(BluetoothControl.mDeviceArrayAdapter);
+		//***未重構部分end***
+	}																						//	結束onCreate方法
+	
+	private void BluetoothConnectControl()													//	BluetoothConnectControl方法
+	{																						//	進入BluetoothConnectControl方法
+		String LHAddress = "";
+		String RHAddress = "";
+		
+		switch (BluetoothControl.state) 													//	依據BluetoothControl類別中state狀態選擇處理方式
+		{																					//	進入switch-case敘述
+			case SELECT_BT_DEVICE:															//	若state為SELECT_BT_DEVICE
+				/**	未選擇欲連線藍芽裝置
+				 */
+				if (LHAddress == "" || RHAddress == "") 									//	若未選擇欲連線藍芽裝置
+				{																			//	進入if敘述
+					new AlertDialog.Builder(this).setTitle("Warning").setMessage("沒有選擇藍芽裝置").setPositiveButton("確定", new DialogInterface.OnClickListener() 
+					{
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+						}
+					}).show();
+				}																			//	結束if敘述
+				/*	選擇相同藍芽裝置
+				 */
+				else if (LHAddress.equals(RHAddress)) 										//	若選擇相同藍芽裝置
+				{																			//	進入else if敘述
+					new AlertDialog.Builder(this).setTitle("Warning").setMessage("不能選擇相同的藍芽裝置").setPositiveButton("確定", new DialogInterface.OnClickListener() 
+					{
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							// TODO Auto-generated method
+							// stub
+						}
+					}).show();
+				}																			//	結束else if敘述
+				/*	正常選擇兩個藍芽裝置
+				 */
+				else																		//	若正常選擇兩個藍芽裝置
+				{																			//	進入else敘述
+					MainActivity.BluetoothConnBtnSetTxt("連線中...請稍後");
+					BluetoothDevice d1,	d2;
+					try {
+						d1 = BluetoothControl.BTadapter.getRemoteDevice(LHAddress);
+						d2 = BluetoothControl.BTadapter.getRemoteDevice(RHAddress);
+					} catch (Exception e) {
+						Toast.makeText(getApplicationContext(), "裝置未開啟", Toast.LENGTH_LONG).show();
+						return;
+					}
+					findViewById(R.id.devicelayout).setVisibility(View.GONE);
+					LHBTList.setEnabled(false);
+					RHBTList.setEnabled(false);
+					BluetoothControl.state = BluetoothControl.BT_STATE.CONNECTING;
+
+					BluetoothControl.BTadapter.cancelDiscovery();
+
+					BluetoothSocket tmp;
+					try {
+						if (secure) {
+							tmp = d1.createRfcommSocketToServiceRecord(MY_UUID_SECURE);
+						} else {
+									tmp = d1.createInsecureRfcommSocketToServiceRecord(MY_UUID_INSECURE);
+						}
+					} catch (IOException e) {
+						Toast.makeText(getApplicationContext(), "連接到" + d1.getName() + "發生錯誤", Toast.LENGTH_LONG);
+						((LinearLayout) findViewById(R.id.devicelayout)).setVisibility(View.VISIBLE);
+						BluetoothConnBtnSetTxt("連線");
+						return;
+					}
+					LHBS = tmp;
+					tmp = null;
+					try {
+						if (secure) {
+							tmp = d2.createRfcommSocketToServiceRecord(MY_UUID_SECURE);
+						} else {
+							tmp = d2.createInsecureRfcommSocketToServiceRecord(MY_UUID_INSECURE);
+						}
+					} catch (IOException e) {
+						Toast.makeText(getApplicationContext(), "連接到" + d2.getName() + "發生錯誤", Toast.LENGTH_LONG);
+						((LinearLayout) findViewById(R.id.devicelayout)).setVisibility(View.VISIBLE);
+						BluetoothConnBtnSetTxt("連線");
+						return;
+					}
+					RHBS = tmp;
+						try {
+						LHBS.connect();
+						RHBS.connect();
+					} catch (IOException e) 
+					{
+						Toast.makeText(getApplicationContext(), "連線失敗", Toast.LENGTH_LONG);
+						((LinearLayout) findViewById(R.id.devicelayout)).setVisibility(View.VISIBLE);
+						BluetoothConnBtnSetTxt("連線");
+						try {
+							LHBS.close();
+						} catch (IOException e1) {
+						}
+						try {
+									RHBS.close();
+								} catch (IOException e1) {
+								}
+								return;
+					}
+					a = new Comm(LHBS, "Left");
+					b = new Comm(RHBS, "Right");
+					a.setView(left);
+					b.setView(right);
+					dataProcess = new DataProcess(a, b);
+					a.start();
+					b.start();
+					dataProcess.start();
+					BluetoothControl.state = BluetoothControl.BT_STATE.CONNECTED;
+					BluetoothConnBtnSetTxt("關閉連線");
+				}
+				break;
+			case CONNECTING:
+				break;
+			case CONNECTED:
+				dataProcess.isRun = false;
+				a.isrun = false;
+				b.isrun = false;
+
+				a.interrupt();
+				b.interrupt();
+				dataProcess.interrupt();
+
+				a = null;
+				b = null;
+				dataProcess = null;
+
+				((LinearLayout) findViewById(R.id.devicelayout)).setVisibility(View.VISIBLE);
+				BluetoothControl.state = BluetoothControl.BT_STATE.SELECT_BT_DEVICE;
+				BluetoothConnBtnSetTxt("連線");
+				LHBTList.setEnabled(true);
+				RHBTList.setEnabled(true);
+				break;
+		}																					//	結束switch-case敘述
+	}																						//	結束BluetoothConnectControl方法
+	public static void BluetoothConnBtnSetTxt(String InputString)									//	BluetoothConnBtnSetTxt方法，設定BluetoothConnBtn(藍芽連線按鈕)顯示文字
+	{																						//	進入BluetoothConnBtnSetTxt方法
+		Log.i(TAG, "BluetoothConnBtnSetTxt:"+InputString);									//	紀錄Log資訊
+		BluetoothConnBtn.setText(InputString);												//	設定BluetoothConnBtn(藍芽連線按鈕)顯示文字
+	}																						//	結束BluetoothConnBtnSetTxt方法
+	//***未重構部分start***
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo)
+	{
+		// TODO Auto-generated method stub
+		super.onCreateContextMenu(menu, v, menuInfo);
+	}
+
+	//*****其他副程式、類別*****
+	public class Comm extends Thread {
+		// 判斷是否開始執行
+		public volatile boolean isrun = true;
+
+		private ArrayList<TextView> information;
+
+		private int last_big;
+
+		private int ShowCount;
+
+		private int[] finger;
+
+		public String communicationNamne = "";
+
+		public String receiveString = "";
+		public int x_gac=0;
+		public int x_ac=0,y_ac=0,z_ac=0;
+		public	int x_dac=0,y_dac=0,z_dac=0;
+		public int pre_dg=0;
+		/**
+		 * 藍芽連線的 Socket
+		 */
+		private BluetoothSocket socket;
+		/**
+		 * 接收資料的串流
+		 */
+		private InputStream ips;
+
+		/**
+		 * 建構子，傳入 BluetoothSocket
+		 *
+		 * @param socket
+		 */
+		public Comm(BluetoothSocket socket, String name) {
+			this.socket = socket;
+			this.ips = null;
+			ShowCount = -1;
+			last_big = -1;
+			this.communicationNamne = name;
+			// 5跟手指頭
+			finger = new int[5];
+			for (int i = 0; i < 5; i++) {
+				finger[i] = 0;
+			}
+			try {
+				ips = socket.getInputStream();
+			} catch (IOException e) {
+			}
+		}
+
+		public void setView(ArrayList<TextView> tv) {
+			this.information = tv;
+		}
+
+		@Override
+		public void run() {
+			byte[] buffer = new byte[1];
+			int bytes = 0;
+			int state=0;
+			int data[]=new int[20];
+			String[] data_s=new String[20];
+			short signdata_before[]=new short[20];
+			short signdata[]=new short[20];
+			int bcd_n=0,sum_pre=0,sum_preb=0;
+			//	 int counter=0;
+			while (this.isrun) {
+
+				try {
+					/*if (this.ips.available() > 0)
+				{Log.i(this.communicationNamne,Integer.toString(this.ips.available() ));} */
+					if (this.ips.available() > 0) {
+						bytes = this.ips.read(buffer);
+						//Log.i(TAG, Integer.toString(bytes));
+						for (int i = 0; i < bytes; i++)
+						{															   //  進入for迴圈
+							int unsignedValue = (int) buffer[i] & 0xff;				 //  取出buffer資料
+							String binary = Integer.toBinaryString(unsignedValue);		 //
+							//	TV_L.setText("123123123");
+
+
+							while (binary.length() < 8) {
+								binary = "0" + binary;
+							}
+							//	Log.i(this.communicationNamne,binary);
+							if (binary.equals("11111111"))
+							{
+								state=-1;
+								signdata_before[0]=signdata[0];
+								signdata_before[1]=signdata[3];
+								signdata_before[2]=signdata[4];
+								signdata_before[3]=signdata[5];
+							}
+							else
+							{
+								state++;
+								data[state]= unsignedValue;
+								data_s[state]=binary;
+							}
+
+
+							if (state==0)
+								this.receiveString = binary;
+							Log.i(this.communicationNamne, binary);
+
+
+							final String finalBinaryString = binary;
+							final	String tar;
+
+							//short signdata=0
+							short sign=0;
+							//	sign=(short)( data[1]>>7);sign=(short)(sign<<15);
+							//	signdata=(short)data[1];signdata= (short) (signdata << 8);
+							//	signdata=(short) (signdata |sign);
+							//bcd_n=data[k];
+
+							if (state==-1)
+							{
+								for(int k=0;k<6;k++)
+								{
+									signdata[k]=(short)(data[k+1]&0x7f );
+									if ((data[k+1]>>7)==1 )
+									{
+										signdata[k]=(short) -signdata[k];
+									}
+								}
+								x_gac=signdata[0];
+								Log.i("GAC", Integer.toString(signdata[0]));
+								x_ac=signdata[3];
+								y_ac=signdata[4];
+								z_ac=signdata[5];
+								x_dac=signdata[3]-signdata_before[1];
+								y_dac=signdata[4]-signdata_before[2];
+								z_dac=signdata[5]-signdata_before[3];
+								tar=this.communicationNamne+"\n"+"finger:"+data_s[0]+"\n"+"X_GC:"+data_s[1]+"\n" /*+"Y:"+data_s[2]+"\n"+"Z:"+data_s[3]+"\n "*/
+										+signdata[0]+"\n"+"X_AC:"+(signdata[3]-signdata_before[1])+"\n"+
+										"Y_AC:"+(signdata[4]-signdata_before[2])+"\n"+
+										"Z_AC:"+(signdata[5]-signdata_before[3])+"\n";
+								runOnUiThread(new Runnable() {
+									@Override
+									public void run() {
+										information.get(0).setText(tar);
+
+									}
+								});
+							}
+						}															   //  結束for迴圈
+					}
+				} catch (IOException e) 
+				{
+				}
+			}
+			try {
+				socket.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			this.interrupt();
+		}
+	}
+	
+	class MyHandler extends Handler {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+				case UPDATE_SETTING_SUCCESS:
+					// 在這邊寫要操作UI(Activity)的部分，就會動作了。
+					String mes=(String) msg.obj;
+					TextView_L.setText(mes);
+					//	handler_state=1;
+				case UPDATE_SETTING_SU:
+					String mes1=(String) msg.obj;
+					TextView_R.setText(mes1);
+			}
+			super.handleMessage(msg);
+		}
+	}
+	public void say(final int id){
+		new Runnable() {
+			@Override
+			public void run() {
+				try {
+					final MediaPlayer player = MediaPlayer.create(MainActivity.this, id);
+					if (player != null) {
+						player.stop();
+					}
+					if (!player.isPlaying())
+					{player.prepare();
+						player.start();
+					}
+					player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+						@Override
+						public void onCompletion(MediaPlayer mp) {
+							player.release();
+						}
+					});
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}.run();
+	}
+	public class DataProcess extends Thread {
+		private Comm left, right;
+		public boolean isRun = true;
+		private ArrayList<HandPattern> handPatterns;
+
+		private String LH, RH;
+		private String lastPattern;
+		int counter=0;
+		public DataProcess(Comm left, Comm right) {
+			this.left = left;
+			this.right = right;
+			handPatterns = new ArrayList<HandPattern>();
+			// 010 00000 , xxx 01111	 左手 右手
+			//z
+			//數字區
+			handPatterns.add(new HandPattern("零", "^(000)(01000)$", "^(010)(11111)$", R.raw.zero));
+			handPatterns.add(new HandPattern("一", "^(000)(01000)$", "^(010)(10111)$", R.raw.one));
+			handPatterns.add(new HandPattern("二", "^(000)(01000)$", "^(010)(10011)$", R.raw.two));
+			handPatterns.add(new HandPattern("三", "^(000)(01000)$", "^(010)(10001)$", R.raw.three));
+			handPatterns.add(new HandPattern("四", "^(000)(01000)$", "^(010)(10000)$", R.raw.four));
+			handPatterns.add(new HandPattern("五", "^(000)(01000)$", "^(010)(01111)$", R.raw.five));
+			handPatterns.add(new HandPattern("六", "^(000)(01000)$", "^(101)(00111)$", R.raw.six));
+			handPatterns.add(new HandPattern("七", "^(000)(01000)$", "^(101)(00011)$", R.raw.seven));
+			handPatterns.add(new HandPattern("八","^(000)(01000)$", "^(101)(00001)$", R.raw.eight));
+			handPatterns.add(new HandPattern("九", "^(000)(01000)$", "^(101)(00000)$", R.raw.nine));
+			//代名詞
+			handPatterns.add(new HandPattern("你", "^([01]{8,8})$","^(101)(00111)$" , R.raw.you));
+			handPatterns.add(new HandPattern("你好", "^(000)(00000)$", "^(101)(10111)$", R.raw.hello));
+			//handPatterns.add(new HandPattern("好", "^(010)(11111)$", "^([01]{8,8})$", R.raw.good));
+			handPatterns.add(new HandPattern("手語", "^(011)(00000)$", "^(101)(00000)$", R.raw.signal_language));
+			//handPatterns.add(new HandPattern("翻譯手套", "^(000)(00000)$", "^(101)(01111)$", R.raw.signal_language));
+			handPatterns.add(new HandPattern("我","^([01]{8,8})$" , "^(010)(00111)$", R.raw.i));
+			handPatterns.add(new HandPattern("他", "^(011)(01111)$","^(101)(10111)$", R.raw.he));
+			handPatterns.add(new HandPattern("她", "^(010)(11110)$","^(101)(10111)$", R.raw.she));
+
+			//名詞
+			//handPatterns.add(new HandPattern("男生", "^([01]{8,8})$", "^(101)(01111)$", R.raw.boy));
+			handPatterns.add(new HandPattern("女生", "^([01]{8,8})$", "^(010)(11110)$", R.raw.girl));
+			//handPatterns.add(new HandPattern("結婚", "^(010)(11110)$", "^(101)(0111)$", R.raw.marry));
+			//handPatterns.add(new HandPattern("離婚", "^(010)(11110)$", "^(101)(0111)$", R.raw.divorce));
+			//handPatterns.add(new HandPattern("爸爸", "^([01]{8,8})$", "^(101)(11000)$", R.raw.father));
+			//handPatterns.add(new HandPattern("媽媽", "^([01]{8,8})$", "^(101)(11000)$", R.raw.mother));
+			//handPatterns.add(new HandPattern("兒子", "^(101)(01111)$", "^(101)(01111)$", R.raw.son));
+			//handPatterns.add(new HandPattern("女兒", "^(101)(01111)$", "^(101)(01111)$", R.raw.daughter));
+			handPatterns.add(new HandPattern("拿", "^([01]{8,8})$", "^(001)(11111)$", R.raw.giveme));
+			handPatterns.add(new HandPattern("到", "^([01]{8,8})$", "^(010)(01110)$", R.raw.come));
+			handPatterns.add(new HandPattern("愛", "^(001)(00000)$", "^([01]{3,3})(01111)$", R.raw.love));
+			handPatterns.add(new HandPattern("對不起","^([01]{8,8})$", "^(010)(10000)$", R.raw.sorry));
+			handPatterns.add(new HandPattern("沒關係","^(010)(11000)$", "^(101)(11000)$", R.raw.dontworry));
+			// 000 00000 , xxx 01111
+			handPatterns.add(new HandPattern("孤單", "^(000)(00000)$", "^([01]{3,3})(01111)$", R.raw.alone));
+			// 100 00000 , xxx 01111
+			//handPatterns.add(new HandPattern("錄取", "^(100)(00000)$", "^([01]{3,3})(01111)$", R.raw.enroll));
+			// 011 00000 , xxx 01111
+			handPatterns.add(new HandPattern("遲", "^(010)(00000)$", "^(010)(00000)$", R.raw.late));
+			handPatterns.add(new HandPattern("保護", "^(011)(00000)$", "^([01]{3,3})(01111)$", R.raw.protection));
+			handPatterns.add(new HandPattern("救命", "^(100)(11111)$", "^(100)(11111)$", R.raw.help));
+			handPatterns.add(new HandPattern("謝謝", "^(011)(11111)$", "^(101)(11111)$", R.raw.thx));
+			handPatterns.add(new HandPattern("在", "^(001)(11111)$", "^(001)(11111)$", R.raw.at));
+			handPatterns.add(new HandPattern("評審", "^(011)(00000)$", "^(100)(00000)$", R.raw.tether));
+			handPatterns.add(new HandPattern("三明治", "^(010)(10001)$", "^(101)(00000)$", R.raw.sandwitch));
+			handPatterns.add(new HandPattern("需要", "^([01]{8,8})$", "^(001)(10000)$", R.raw.need));
+			handPatterns.add(new HandPattern("幫忙", "^(010)(00000)$", "^([01]{3,3})(01111)$", R.raw.helpyou));
+			handPatterns.add(new HandPattern("咖啡", "^(011)(11111)$", "^(010)(10011)$", R.raw.coffee));
+			handPatterns.add(new HandPattern("價錢", "^([01]{8,8})$", "^(000)(11000)$", R.raw.money));
+			handPatterns.add(new HandPattern("多少",  "^([01]{8,8})$", "^(100)(00000)$", R.raw.howmuch));
+			handPatterns.add(new HandPattern("翻譯手套", "^(100)(00110)$", "^(100)(00110)$", R.raw.translateglove));
+			handPatterns.add(new HandPattern("是", "^([01]{8,8})$", "^(010)(10000)$", R.raw.is));
+			//handPatterns.add(new HandPattern("回家",  "^(011)(00000)$", "^(101)(01111)$", R.raw.go_home)); // maybe roll worning
+			//handPatterns.add(new HandPattern("ok",  "^(010)(10000)$", "^([01]{8,8})$", R.raw.ok));
+			//handPatterns.add(new HandPattern("可以",  "^(001)(00000)$", "^(010)(11110)$", R.raw.can));
+			//handPatterns.add(new HandPattern("道路",  "^(011)(01110)$", "^(101)(01110)$", R.raw.roll));
+			handPatterns.add(new HandPattern("台北",  "^(010)(00111)$", "^(010)(00111)$", R.raw.taipei));
+			handPatterns.add(new HandPattern("科技",  "^(001)(11111)$", "^(101)(00111)$", R.raw.tech));
+			handPatterns.add(new HandPattern("大學",  "^(001)(10111)$", "^(001)(10111)$", R.raw.uneversity));
+			//handPatterns.add(new HandPattern("大家",  "^([01]{8,8})$", "^(001)(10111)$", R.raw.everyone));
+/*有加速度*/	handPatterns.add(new HandPattern("有", "^([01]{8,8})$", "^(010)(00000)$", R.raw.has));
+/*有加速度*/	handPatterns.add(new HandPattern("壞人", "(010)(11111)$", "^(001)(00000)$",R.raw.badperson));
+///*有加速度*/	handPatterns.add(new HandPattern("在", "(000)(11111)$", "(000)(11111)$", R.raw.at));
+/*有加速度*/	handPatterns.add(new HandPattern("跟蹤", "(010)(10111)$", "(010)(10111)$", R.raw.com));
+/*有x加速度*/	handPatterns.add(new HandPattern("拜託", "(010)(11111)$", "(010)(11111)$", R.raw.pls));
+		}
+
+		@Override
+		public void run() {
+			super.run();
+			while (this.isRun) {
+				// 如果左右手的 Socket 都在執行的話，就開始判斷
+				if (left.isrun && right.isrun) {
+					//Log.i(TAG, "detect");
+					LH = left.receiveString;
+					RH = right.receiveString;
+
+					if (RH != "" && LH != "") {
+						boolean findPattern = false;
+						String nowPattern = "";
+						for (int i = 0; i < handPatterns.size(); i++) {
+							// Log.i(TAG , "LH:" + LH + " RH:" + RH);
+							if (handPatterns.get(i).isMatch(LH, RH)) {
+								if (lastPattern != handPatterns.get(i).word)
+								{
+									lastPattern = handPatterns.get(i).word;
+									if (lastPattern.equals("孤單"))
+									{if (left.x_dac>10 && left.x_dac>10&& left.z_dac>10)
+									{
+										findPattern=true;
+										//speechTextByGoogle(lastPattern);
+										//say(handPatterns.get(i).mp3ID);
+									}
+									else
+									{findPattern=true;
+										lastPattern="";
+									}
+
+									}
+									if (nowPattern.equals(lastPattern))
+									{
+
+									}
+									else
+									{
+										nowPattern=lastPattern;
+										for (int k = 0; k < handPatterns.size(); k++)
+										{
+											if (lastPattern == handPatterns.get(k).word)
+											{
+												say(handPatterns.get(k).mp3ID);
+											}
+										}
+									}
+									findPattern = true;
+									break;
+								} else {
+									findPattern = true;
+
+									break;
+								}
+							}
+						}
+						//   this is word_a
+						try{
+							// 透過Message來傳遞值做對應操作UI(Activity)的部分即可執行。
+							Message m = new Message();
+							//	m.what = UPDATE_SETTING_SUCCESS;
+							m=handler.obtainMessage(UPDATE_SETTING_SUCCESS,word_a);
+							handler.sendMessage(m);
+							// 在這邊寫要操作UI(Activity)的部分，不會動作，還有可能程式會當掉。
+						}catch (Exception e)
+						{
+							e.printStackTrace();
+							// 在這邊寫要操作UI(Activity)的部分，不會動作，還有可能程式會當掉。
+						}
+						if (!findPattern) {
+							lastPattern = "";
+						}
+						else
+						{
+							word_a=lastPattern;
+						}
+					}
+					try {
+						Thread.sleep(1500);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+	//***未重構部分end***
+}																							//	結束MainActivity類別
