@@ -14,13 +14,12 @@ BasicPosture class:
 					手語51種基本手型使用10位元二進制編碼
 					static final成員
 					
-VoiceData class:
-				語系切換用
-				static成員
-				
 BluetoothControl class 繼承 MainActivity:
-								列舉藍芽狀態enum
-								記錄左右手藍芽MAC address
+									列舉藍芽狀態enum
+									記錄左右手藍芽MAC address				
+VoiceData class:
+				設置語音變數，目的動態切換語系
+				say method發音用
 								
 HandPattern class:
 				靜態詞彙用
@@ -54,3 +53,8 @@ CombinationPattern class:
 						整合複合詞結果:isMatch method
 										->外部導引詞1與類別私有導引詞1是否相等
 										->外部導引詞2與類別私有導引詞2是否相等
+										
+Vocabulary class:
+				手語詞彙庫與語音包
+				使用HandPattern、HandMotionPattern、CombinationPattern建立詞彙
+				使用VoiceData的語音變數加入mp3ID中動態切換語系
