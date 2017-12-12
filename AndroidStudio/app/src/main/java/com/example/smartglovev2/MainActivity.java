@@ -87,14 +87,17 @@ public class MainActivity extends AppCompatActivity									 		//	MainActivity�
 	// 資料處理執行緒
 	private DataProcess dataProcess;
 	MyHandler handler = new MyHandler();
+	//BluetoothControl bluetoothControl=new BluetoothControl(MainActivity.this);
 	private String word_a;
 	//---Smart Glove V2編碼處理用變數---
 	private TextView ShowWord;
 	//切換語言
 	public Switch lang;
 	public static String langSetting = "";
+	//詞彙庫
 	Vocabulary Vocabulary1;
-	VoiceRecognition VoiceRecognition1=new VoiceRecognition(this);
+	//語音輸入
+	//VoiceRecognition VoiceRecognition1=new VoiceRecognition(this);;
 
 	@Override
 	protected void onStart() 																//	onStart方法
@@ -115,7 +118,7 @@ public class MainActivity extends AppCompatActivity									 		//	MainActivity�
 			return;
 		}
 		if (requireBluetooth()) {
-			showBTinformation();
+				showBTinformation();
 		}
 
 	}
@@ -131,7 +134,7 @@ public class MainActivity extends AppCompatActivity									 		//	MainActivity�
 		LHTV = (TextView) this.findViewById(R.id.LHTextView);
 		RHTV = (TextView) this.findViewById(R.id.RHTextView);
 		btinformation = (TextView) this.findViewById(R.id.BTinformationTextView);			//  將BTinformationTextView與該程式宣告物件btinformation連結
-		Button speakButton = (Button) findViewById(R.id.BT_GV);								//  將Layout物件speakButton與該程式宣告物件BT_GV連結
+		//Button speakButton = (Button) findViewById(R.id.BT_GV);								//  將Layout物件speakButton與該程式宣告物件BT_GV連結
 		mList = (ListView) findViewById(R.id.LV_GV);										//  將Layout物件LV_GV與該程式宣告物件mList連結
 		LHBTList = (ListView) this.findViewById(R.id.LHBTListView);							//  將LHBTListView與該程式物件LHBTList連結
 		RHBTList = (ListView) this.findViewById(R.id.RHBTListView);							//  將RHBTListView與該程式物件RHBTList連結
@@ -293,10 +296,9 @@ public class MainActivity extends AppCompatActivity									 		//	MainActivity�
 			}
 		});
 
-
 		PackageManager pm = getPackageManager();
-		List<ResolveInfo> activities = pm.queryIntentActivities(new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0);
-		if (activities.size() != 0)
+		//List<ResolveInfo> activities = pm.queryIntentActivities(new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0);
+		/*if (activities.size() != 0)
 		{																					//  進入if敘述
 			speakButton.setOnClickListener(new OnClickListener()
 			{
@@ -304,7 +306,7 @@ public class MainActivity extends AppCompatActivity									 		//	MainActivity�
 				public void onClick(View v)													//  onClick程式，speakButton被按下時觸發
 				{																			//  進入onClick程式
 					// TODO Auto-generated method stub
-					VoiceRecognition1.startVoiceRecognitionActivity();										//  呼叫startVoiceRecognitionActivity副程式，開始語音辨識
+					//VoiceRecognition1.startVoiceRecognitionActivity();										//  呼叫startVoiceRecognitionActivity副程式，開始語音辨識
 				}																			//  結束onClick程式
 			});
 		}																					//  結束if敘述
@@ -312,7 +314,7 @@ public class MainActivity extends AppCompatActivity									 		//	MainActivity�
 		{																					//  進入else敘述
 			speakButton.setEnabled(false);
 			speakButton.setText("Recognizer not present");
-		}																					//  結束else敘述
+		}*/																					//  結束else敘述
 		left = new ArrayList<TextView>();													//  建立left物件(ArrayList<TextView>型態)
 		right = new ArrayList<TextView>();													//  建立right物件(ArrayList<TextView>型態)
 		left.add(((TextView) findViewById(R.id.ltv1)));										//  新增項目至left ArrayList
@@ -376,8 +378,8 @@ public class MainActivity extends AppCompatActivity									 		//	MainActivity�
 	}
 
 
-	//*****其他副程式、類別*****
-	private boolean requireBluetooth() {
+	//*****bluetooth副程式、類別*****
+	public boolean requireBluetooth() {
 		if (!BTadapter.isEnabled()) {
 			Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 			this.startActivityForResult(enableIntent, BluetoothControl.GET_REQUEST_ENABLE_BT());
@@ -385,7 +387,8 @@ public class MainActivity extends AppCompatActivity									 		//	MainActivity�
 		}
 		return true;
 	}
-	private void showBTinformation() 
+
+	public void showBTinformation()
 	{
 		String address = BTadapter.getAddress();
 		String name = BTadapter.getName();
@@ -401,7 +404,8 @@ public class MainActivity extends AppCompatActivity									 		//	MainActivity�
 		BTadapter.startDiscovery();
 		this.setProgressBarIndeterminateVisibility(true);
 	}
-	private final BroadcastReceiver mReceiver = new BroadcastReceiver() 
+
+	public final BroadcastReceiver mReceiver = new BroadcastReceiver()
 	{
 		@Override
 		public void onReceive(Context context, Intent intent) 
@@ -422,6 +426,7 @@ public class MainActivity extends AppCompatActivity									 		//	MainActivity�
 			}
 		}
 	};
+
 	public class Comm extends Thread {
 		// 判斷是否開始執行
 		public volatile boolean isrun = true;
@@ -755,9 +760,9 @@ public class MainActivity extends AppCompatActivity									 		//	MainActivity�
 								"dGZ:" + SensorData1.GetdGZ() +
 								'\n' + '\n' + '\n' + '\n';
 								
-							/*DisplayText = receiveString;*/
-							//DisplayText = DisplayText + BufferString;
-							//DisplayTextCount = DisplayTextCount + 1;
+							/*DisplayText = receiveString;
+							DisplayText = DisplayText + BufferString;
+							DisplayTextCount = DisplayTextCount + 1;*/
 						}
 						
 						final String FinalDisplayText = this.communicationNamne+"\n" + DisplayText;
@@ -799,31 +804,7 @@ public class MainActivity extends AppCompatActivity									 		//	MainActivity�
 			super.handleMessage(msg);
 		}
 	}
-	public void say(final int id){
-		new Runnable() {
-			@Override
-			public void run() {
-				try {
-					final MediaPlayer player = MediaPlayer.create(MainActivity.this, id);
-					if (player != null) {
-						player.stop();
-					}
-					if (!player.isPlaying())
-					{player.prepare();
-						player.start();
-					}
-					player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-						@Override
-						public void onCompletion(MediaPlayer mp) {
-							player.release();
-						}
-					});
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}.run();
-	}
+
 	public class DataProcess extends Thread {
 		private Comm left, right;
 		public boolean isRun = true;
@@ -846,11 +827,9 @@ public class MainActivity extends AppCompatActivity									 		//	MainActivity�
 			this.left = left;
 			this.right = right;
 			Vocabulary1 = new Vocabulary(langSetting);
-			//Vocabulary1.Voc();
 			Vocabulary1.StaticVocabulary();
 			Vocabulary1.MotionVocabulary();
 			Vocabulary1.CombinationVocabulary();
-
 		}
 
 		@Override
@@ -859,6 +838,7 @@ public class MainActivity extends AppCompatActivity									 		//	MainActivity�
 			int MatchTimes = 0;
 			int SameWordCount = 0;
 			String ResultStr = "";
+
 			while (this.isRun) {
 				// 如果左右手的 Socket 都在執行的話，就開始判斷
 				if (left.isrun && right.isrun) {
@@ -888,6 +868,7 @@ public class MainActivity extends AppCompatActivity									 		//	MainActivity�
 					{
 						boolean findPattern = false;
 						String nowPattern = "";
+
 						for(int loopnum1 = 0; loopnum1 < Vocabulary1.handMotionPatterns.size(); loopnum1++)
 						{
 							if(Vocabulary1.handMotionPatterns.get(loopnum1).isMatch(	LH, LHOrientation,
@@ -910,7 +891,7 @@ public class MainActivity extends AppCompatActivity									 		//	MainActivity�
 											SameWordCount = 0;
 											if(ShowWord.getText().equals(Vocabulary1.handMotionPatterns.get(loopnum1).ChineseWord.toString()) == false)
 											{
-												say(Vocabulary1.handMotionPatterns.get(loopnum1).mp3ID);
+												Vocabulary1.VoiceData1.say(MainActivity.this,Vocabulary1.handMotionPatterns.get(loopnum1).mp3ID);
 												final String OutputStr = Vocabulary1.handMotionPatterns.get(loopnum1).ChineseWord.toString();
 												//	https://stackoverflow.com/questions/3134683/android-toast-in-a-thread
 												MainActivity.this.runOnUiThread(new Runnable() {				//	控制UI須新增runOnUiThread
@@ -929,7 +910,7 @@ public class MainActivity extends AppCompatActivity									 		//	MainActivity�
 											if(Vocabulary1.combinationPatterns.get(loopnum2).isMatch(ResultStr, Vocabulary1.handMotionPatterns.get(loopnum1).ChineseWord.toString()
 																						) == true)
 											{
-												say(Vocabulary1.combinationPatterns.get(loopnum2).mp3ID);
+												Vocabulary1.VoiceData1.say(MainActivity.this,Vocabulary1.combinationPatterns.get(loopnum2).mp3ID);
 												final String OutputStr = Vocabulary1.combinationPatterns.get(loopnum2).ChineseWord.toString();
 												//	https://stackoverflow.com/questions/3134683/android-toast-in-a-thread
 												MainActivity.this.runOnUiThread(new Runnable() {				//	控制UI須新增runOnUiThread
@@ -961,7 +942,7 @@ public class MainActivity extends AppCompatActivity									 		//	MainActivity�
 												SameWordCount = 0;
 												if(ShowWord.getText().equals( Vocabulary1.handPatterns.get(loopnum1).ChineseWord.toString()) == false)
 												{
-													say(Vocabulary1.handPatterns.get(loopnum1).mp3ID);
+													Vocabulary1.VoiceData1.say(MainActivity.this,Vocabulary1.handPatterns.get(loopnum1).mp3ID);
 													final String OutputStr = Vocabulary1.handPatterns.get(loopnum1).ChineseWord.toString();
 													//	https://stackoverflow.com/questions/3134683/android-toast-in-a-thread
 													MainActivity.this.runOnUiThread(new Runnable() {                //	控制UI須新增runOnUiThread
@@ -976,7 +957,7 @@ public class MainActivity extends AppCompatActivity									 		//	MainActivity�
 											for (int loopnum2 = 0; loopnum2 < Vocabulary1.combinationPatterns.size(); loopnum2++) {
 												if (Vocabulary1.combinationPatterns.get(loopnum2).isMatch(ResultStr, Vocabulary1.handPatterns.get(loopnum1).ChineseWord.toString()
 												) == true) {
-													say(Vocabulary1.combinationPatterns.get(loopnum2).mp3ID);
+													Vocabulary1.VoiceData1.say(MainActivity.this,Vocabulary1.combinationPatterns.get(loopnum2).mp3ID);
 													final String OutputStr = Vocabulary1.combinationPatterns.get(loopnum2).ChineseWord.toString();
 													//https://stackoverflow.com/questions/3134683/android-toast-in-a-thread
 													MainActivity.this.runOnUiThread(new Runnable() {                //	控制UI須新增runOnUiThread
@@ -1029,4 +1010,14 @@ public class MainActivity extends AppCompatActivity									 		//	MainActivity�
 		}
 	}
 
+	/*public void startVoiceRecognitionActivity()												//  startVoiceRecognitionActivity副程式
+	{																						//  進入startVoiceRecognitionActivity副程式
+		Intent RecognizerIntent1 = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);	//  通過Intent傳遞語音辨識的模式
+		RecognizerIntent1.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+		//  設定語言模式和自由形式的語音辨識
+		RecognizerIntent1.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speech recognition demo");
+		//  提示語音開始
+		startActivityForResult(RecognizerIntent1, VoiceRecognition.GetVOICE_RECOGNITION_REQUEST_CODE());
+		//  開始執行我們的Intent、語音辨識
+	}	*/																					//  結束startVoiceRecognitionActivity副程式
 }																							//  結束MainActivity類別

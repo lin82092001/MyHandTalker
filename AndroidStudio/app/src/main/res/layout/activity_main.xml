@@ -250,12 +250,12 @@
 
     </LinearLayout>
 
-    <Button
+    <!--<Button
         android:id="@+id/BT_GV"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/linearLayout1"
-        android:text="@string/voice" />
+        android:text="@string/voice" />-->
 </LinearLayout>

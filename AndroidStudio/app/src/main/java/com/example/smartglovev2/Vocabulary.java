@@ -1,9 +1,5 @@
 package com.example.smartglovev2;
 
-import android.widget.CompoundButton;
-import android.widget.Switch;
-import android.widget.Toast;
-
 import java.util.ArrayList;
 
 /**
@@ -65,53 +61,6 @@ public class Vocabulary {
         }
     }
 
-    /*public void Voc(){
-        if(MainActivity.langSetting.equals("Ch"))
-        {
-            VoiceData1.hello=R.raw.hello;
-            VoiceData1.i=R.raw.i;
-            VoiceData1.you=R.raw.you;
-            VoiceData1.thanks=R.raw.thanks;
-            VoiceData1.welcome=R.raw.welcome;
-            VoiceData1.come=R.raw.come;
-            VoiceData1.love=R.raw.love;
-            VoiceData1.lonely=R.raw.lonely;
-            VoiceData1.help=R.raw.help;
-            VoiceData1.admin=R.raw.admin;
-            VoiceData1.protect=R.raw.protect;
-            VoiceData1.taipei=R.raw.taipei;
-            VoiceData1.taiwan=R.raw.taiwan;
-            VoiceData1.technology=R.raw.technology;
-            VoiceData1.university=R.raw.university;
-            VoiceData1.need=R.raw.need;
-            VoiceData1.coffee=R.raw.coffee;
-            VoiceData1.sandwich=R.raw.sandwich;
-            VoiceData1.study=R.raw.study;
-        }
-        else if(MainActivity.langSetting.equals("En"))
-        {
-            VoiceData1.hello=R.raw.helloen;
-            VoiceData1.i=R.raw.ien;
-            VoiceData1.you=R.raw.youen;
-            VoiceData1.thanks=R.raw.thanksen;
-            VoiceData1.welcome=R.raw.welcomeen;
-            VoiceData1.come=R.raw.comeen;
-            VoiceData1.love=R.raw.loveen;
-            VoiceData1.lonely=R.raw.lonelyen;
-            VoiceData1.help=R.raw.helpen;
-            VoiceData1.admin=R.raw.adminen;
-            VoiceData1.protect=R.raw.protecten;
-            VoiceData1.taipei=R.raw.taipeien;
-            VoiceData1.taiwan=R.raw.taiwanen;
-            VoiceData1.technology=R.raw.technologyen;
-            VoiceData1.university=R.raw.universityen;
-            VoiceData1.need=R.raw.needen;
-            VoiceData1.coffee=R.raw.coffeeen;
-            VoiceData1.sandwich=R.raw.sandwichen;
-            VoiceData1.study=R.raw.studyen;
-        }
-    }*/
-
     // 靜態詞彙庫
     // 51種基本手型
     public void StaticVocabulary(){
@@ -172,7 +121,7 @@ public class Vocabulary {
         handPatterns.add(new HandPattern("廁所",	"WC",			BasicPosture.WC,	 "forward",			BasicPosture.NUMBER,		"backward",	R.raw.wc));
         //手能生橋 1~3章 靜態詞彙區
         handPatterns.add(new HandPattern("我",		"I",			BasicPosture.ONE,	 "downward",		BasicPosture.HAND,		"backward",	VoiceData1.i));
-        handPatterns.add(new HandPattern("你",		"You",			BasicPosture.HAND,	 "downward",		BasicPosture.HAND,		"downward",	VoiceData1.you));
+        handPatterns.add(new HandPattern("你",		"You",			BasicPosture.ONE,	 "outward",		BasicPosture.HAND,		"backward",	VoiceData1.you));
         handPatterns.add(new HandPattern("他",		"He",			BasicPosture.ONE,	 "outward",		BasicPosture.MALE,		"inward",	R.raw.he));
         handPatterns.add(new HandPattern("她",		"She",			BasicPosture.ONE,	 "outward",		BasicPosture.FEMALE,	"forward",	R.raw.she));
         //handPatterns.add(new HandPattern("誰",		"Who",			BasicPosture.MALE,	 "outward",		BasicPosture.HAND,		"backward",	R.raw.who));
@@ -216,7 +165,7 @@ public class Vocabulary {
         //handPatterns.add(new HandPattern("父前",	"father_lead",	BasicPosture.SIX,		"outward",	BasicPosture.HAND,	 "backward",	R.raw.nulll));
         //handPatterns.add(new HandPattern("母前",	"mother_lead",	BasicPosture.MOTHER_LEAD,"outward",	BasicPosture.HAND,	 "backward",		R.raw.nulll));
         //handPatterns.add(new HandPattern("母後",	"mother_back",	BasicPosture.FEMALE		,"forward",	BasicPosture.HAND,	 "backward",		R.raw.nulll));
-        handPatterns.add(new HandPattern("你後",	"mother_back",	BasicPosture.FIST		,"forward",	BasicPosture.HAND,	 "downward",		R.raw.nulll));
+        handPatterns.add(new HandPattern("你後",	"mother_back",	BasicPosture.FIST		,"forward",	BasicPosture.HAND,	 "backward",		R.raw.nulll));
         handPatterns.add(new HandPattern("系統",	"System",	BasicPosture.THREE		,"forward",	BasicPosture.ONE,	 "downward",		R.raw.system));
         handPatterns.add(new HandPattern("多少1",		"price1",		BasicPosture.HAND,	 "backward",		BasicPosture.FOUR,		"upward",		R.raw.nulll));
         handPatterns.add(new HandPattern("多少2",		"price2",		BasicPosture.HAND,	 "backward",		BasicPosture.FIST,		"upward",		R.raw.nulll));
@@ -268,10 +217,10 @@ public class Vocabulary {
 					R.raw.nulll));*/
         handMotionPatterns.add(new HandMotionPattern(	"謝謝",		"thanks",
                 BasicPosture.FIST,	"outward",
-                20, -10000, -10000, -10000, -10000,
+                0, -10000, -10000, -10000, -10000,
                 -10000, -10000,-10000,
                 BasicPosture.FIST,	"inward",
-                20, -10000, -10000, -10000, -10000,
+                0, -10000, -10000, -10000, -10000,
                 -10000, -10000, -10000,
                 VoiceData1.thanks));
         handMotionPatterns.add(new HandMotionPattern(	"攪拌",		"Stir",

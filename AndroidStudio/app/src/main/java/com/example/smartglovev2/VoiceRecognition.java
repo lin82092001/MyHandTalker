@@ -23,6 +23,7 @@ public class VoiceRecognition extends MainActivity 											//	VoiceRecognitio
 	{																						//	進入GetVOICE_RECOGNITION_REQUEST_CODE方法
 		return VoiceRecognition.VOICE_RECOGNITION_REQUEST_CODE;								//	回傳VOICE_RECOGNITION_REQUEST_CODE
 	}																						//	結束GetVOICE_RECOGNITION_REQUEST_CODE方法
+
 	public void startVoiceRecognitionActivity()												//  startVoiceRecognitionActivity副程式
 	{																						//  進入startVoiceRecognitionActivity副程式
 		Intent RecognizerIntent1 = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);	//  通過Intent傳遞語音辨識的模式

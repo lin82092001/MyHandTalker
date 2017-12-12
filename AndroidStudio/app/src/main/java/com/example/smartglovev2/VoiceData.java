@@ -1,5 +1,8 @@
 package com.example.smartglovev2;
 
+import android.content.Context;
+import android.media.MediaPlayer;
+
 /**
  * Created by 林北94狂 on 2017/11/17.
  */
@@ -29,5 +32,32 @@ public class VoiceData
     public VoiceData()
     {
 
+    }
+
+    public void say(final Context context, final int id){
+        new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    //https://stackoverflow.com/questions/12154951/android-mediaplayer-create
+                    final MediaPlayer player = MediaPlayer.create(context, id);
+                    if (player != null) {
+                        player.stop();
+                    }
+                    if (!player.isPlaying())
+                    {player.prepare();
+                        player.start();
+                    }
+                    player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        @Override
+                        public void onCompletion(MediaPlayer mp) {
+                            player.release();
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.run();
     }
 }
