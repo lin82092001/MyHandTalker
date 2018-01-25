@@ -28,6 +28,12 @@ public class VoiceData
     public int coffee;
     public int sandwich;
     public int study;
+    public int letter;
+    public int recletter;
+    public int stamp;
+    public int pay;
+    public int howmuch;
+    public int price;
 
     public VoiceData()
     {

@@ -52,7 +52,7 @@ public final class BasicPosture
 	public static final String PEN = "1100011111";
 	public static final String SIMILAR = "0000111111";
 	public static final String DUCK = "0000001111";
-	public static final String MONEY = "0101000000";
+	public static final String MONEY = "1111000000";
 	public static final String DRAGON = "0100010100";
 	public static final String WORM = "1111111101";
 	public static final String ARM = "1111111111";

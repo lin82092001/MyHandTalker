@@ -36,6 +36,12 @@ public class Vocabulary {
             VoiceData1.coffee=R.raw.coffee;
             VoiceData1.sandwich=R.raw.sandwich;
             VoiceData1.study=R.raw.study;
+            VoiceData1.letter=R.raw.letter;
+            VoiceData1.stamp=R.raw.stamp;
+            VoiceData1.pay=R.raw.pay;
+            VoiceData1.howmuch=R.raw.howmuch;
+            VoiceData1.price=R.raw.price;
+            VoiceData1.recletter=R.raw.recletter;
         }
         else if(state.equals("En"))
         {
@@ -58,6 +64,12 @@ public class Vocabulary {
             VoiceData1.coffee=R.raw.coffeeen;
             VoiceData1.sandwich=R.raw.sandwichen;
             VoiceData1.study=R.raw.studyen;
+            VoiceData1.letter=R.raw.letteren;
+            VoiceData1.stamp=R.raw.stampen;
+            VoiceData1.pay=R.raw.payen;
+            VoiceData1.howmuch=R.raw.howmuchen;
+            VoiceData1.price=R.raw.priceen;
+            VoiceData1.recletter=R.raw.recletteren;
         }
     }
 
@@ -155,8 +167,11 @@ public class Vocabulary {
         handPatterns.add(new HandPattern("星期五",	"Friday",	BasicPosture.SEVEN	,"outward",	BasicPosture.MALE,	 "forward",		R.raw.friday));
         handPatterns.add(new HandPattern("星期六",	"Saturday",	BasicPosture.SEVEN	,"outward",	BasicPosture.SIX,	 "inward",		R.raw.saturday));
         handPatterns.add(new HandPattern("星期日",	"Sunday",	BasicPosture.SEVEN	,"outward",	BasicPosture.SEVEN,	 "inward",		R.raw.sunday));
-
-
+        handPatterns.add(new HandPattern("寄信",     "Send letter",BasicPosture.TWO,"outward",BasicPosture.TWO,"upward",VoiceData1.letter));
+        handPatterns.add(new HandPattern("收信",     "Receive",BasicPosture.TWO,"outward",BasicPosture.TWO,"inward",VoiceData1.recletter));
+        handPatterns.add(new HandPattern("繳錢",     "Pay",BasicPosture.HAND,"backward",BasicPosture.MONEY,"inward",VoiceData1.pay));
+        handPatterns.add(new HandPattern("多少",		"how much",		BasicPosture.HAND,	 "backward",		BasicPosture.FOUR,		"upward",		VoiceData1.howmuch));
+        handPatterns.add(new HandPattern("價錢",		"price",		BasicPosture.MONEY,	 "backward",		BasicPosture.HAND,		"backward",		VoiceData1.price));
 
 
         handPatterns.add(new HandPattern("是",		"Yes",			BasicPosture.FOUR,	 "forward",		BasicPosture.HAND,		"backward",	R.raw.is));
@@ -167,10 +182,12 @@ public class Vocabulary {
         //handPatterns.add(new HandPattern("母後",	"mother_back",	BasicPosture.FEMALE		,"forward",	BasicPosture.HAND,	 "backward",		R.raw.nulll));
         handPatterns.add(new HandPattern("你後",	"mother_back",	BasicPosture.FIST		,"forward",	BasicPosture.HAND,	 "backward",		R.raw.nulll));
         handPatterns.add(new HandPattern("系統",	"System",	BasicPosture.THREE		,"forward",	BasicPosture.ONE,	 "downward",		R.raw.system));
-        handPatterns.add(new HandPattern("多少1",		"price1",		BasicPosture.HAND,	 "backward",		BasicPosture.FOUR,		"upward",		R.raw.nulll));
-        handPatterns.add(new HandPattern("多少2",		"price2",		BasicPosture.HAND,	 "backward",		BasicPosture.FIST,		"upward",		R.raw.nulll));
+        //handPatterns.add(new HandPattern("多少1",		"price1",		BasicPosture.HAND,	 "backward",		BasicPosture.FOUR,		"upward",		R.raw.nulll));
+        //handPatterns.add(new HandPattern("多少2",		"price2",		BasicPosture.HAND,	 "backward",		BasicPosture.FIST,		"upward",		R.raw.nulll));
         //handPatterns.add(new HandPattern("生",	"Born",	BasicPosture.MALE		,"outward",	BasicPosture.MALE,	 "inward",		R.raw.born));
         //handPatterns.add(new HandPattern("兒子女兒1",	"Born",	BasicPosture.MALE		,"outward",	BasicPosture.MALE,	 "inward",		R.raw.nulll));
+        handPatterns.add(new HandPattern("郵",     "Stamp1",BasicPosture.TWO,"upward",BasicPosture.TWO,"forward",R.raw.nulll));
+        handPatterns.add(new HandPattern("票",     "Stamp2",BasicPosture.TWO,"upward",BasicPosture.TWO,"downward",R.raw.nulll));
 
 
         handPatterns.add(new HandPattern("需1",	"need1", BasicPosture.HAND,	 "backward",		BasicPosture.FOUR	,"downward",	R.raw.nulll));
@@ -432,14 +449,14 @@ public class Vocabulary {
                 -10000, -10000, -10000, -10000, -10000,
                 -10000, -10000, -10000,
                 VoiceData1.sandwich));
-        handMotionPatterns.add(new HandMotionPattern(	"價錢",	"price",
-                BasicPosture.MONEY,	"backward",
-                -10000, -10000, -10000, -10000, -10000,
-                1000, -10000, -10000,
-                BasicPosture.HAND,	"backward",
-                -10000, -10000, -10000, -10000, -10000,
-                -10000, -10000,-10000,
-                R.raw.price));
+//        handMotionPatterns.add(new HandMotionPattern(	"價錢",	"price",
+//                BasicPosture.MONEY,	"backward",
+//                -10000, -10000, -10000, -10000, -10000,
+//                1000, -10000, -10000,
+//                BasicPosture.HAND,	"backward",
+//                -10000, -10000, -10000, -10000, -10000,
+//                -10000, -10000,-10000,
+//                R.raw.price));
     }
 
     public void CombinationVocabulary() {
@@ -454,6 +471,7 @@ public class Vocabulary {
         combinationPatterns.add(new CombinationPattern("咖啡",	"coffee",	"棕_",	"攪拌_", VoiceData1.coffee));
         //combinationPatterns.add(new	CombinationPattern("多少",	"how much",	"多少1",	"多少2", R.raw.howmuch));
         combinationPatterns.add(new CombinationPattern("歡迎",	"welcome",	"高興",	"迎接", VoiceData1.welcome));
+        combinationPatterns.add(new CombinationPattern("郵票",	"Stamp",	"郵",	"票", VoiceData1.stamp));
         //combinationPatterns.add(new	CombinationPattern("總統",	"president",	"國家",	"領袖", R.raw.president));
     }
 
