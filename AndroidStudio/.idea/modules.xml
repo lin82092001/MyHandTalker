@@ -5,7 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/AndroidStudio.iml" filepath="$PROJECT_DIR$/AndroidStudio.iml" />
       <module fileurl="file://D:\MyHandTalker\AndroidStudio\SmartGloveV2.iml" filepath="D:\MyHandTalker\AndroidStudio\SmartGloveV2.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://D:\MyHandTalker\AndroidStudio\app\app.iml" filepath="D:\MyHandTalker\AndroidStudio\app\app.iml" />
     </modules>
   </component>
 </project>

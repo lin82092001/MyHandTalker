@@ -172,6 +172,7 @@ public class Vocabulary {
         handPatterns.add(new HandPattern("繳錢",     "Pay",BasicPosture.HAND,"backward",BasicPosture.MONEY,"inward",VoiceData1.pay));
         handPatterns.add(new HandPattern("多少",		"how much",		BasicPosture.HAND,	 "backward",		BasicPosture.FOUR,		"upward",		VoiceData1.howmuch));
         handPatterns.add(new HandPattern("價錢",		"price",		BasicPosture.MONEY,	 "backward",		BasicPosture.HAND,		"backward",		VoiceData1.price));
+        handPatterns.add(new HandPattern("謝謝",     "thanks",    BasicPosture.MALE,   "outward",         BasicPosture.MALE,       "inward",      VoiceData1.thanks));
 
 
         handPatterns.add(new HandPattern("是",		"Yes",			BasicPosture.FOUR,	 "forward",		BasicPosture.HAND,		"backward",	R.raw.is));
@@ -232,14 +233,14 @@ public class Vocabulary {
 					-10000, -10000, -10000, -10000, -10000,
 					1000, -10000, -10000,
 					R.raw.nulll));*/
-        handMotionPatterns.add(new HandMotionPattern(	"謝謝",		"thanks",
+        /*handMotionPatterns.add(new HandMotionPattern(	"謝謝",		"thanks",
                 BasicPosture.FIST,	"outward",
                 0, -10000, -10000, -10000, -10000,
                 -10000, -10000,-10000,
                 BasicPosture.FIST,	"inward",
                 0, -10000, -10000, -10000, -10000,
                 -10000, -10000, -10000,
-                VoiceData1.thanks));
+                VoiceData1.thanks));*/
         handMotionPatterns.add(new HandMotionPattern(	"攪拌",		"Stir",
                 BasicPosture.TWO,	"backward",
                 -10000, -10000, -10000, -10000, -10000,
